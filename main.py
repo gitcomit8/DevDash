@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, Form
+from fastapi import FastAPI, HTTPException, Request, Depends, Form
 from starlette.middleware.sessions import SessionMiddleware
 from cachetools import TTLCache, cached
 from fastapi.templating import Jinja2Templates
@@ -13,6 +13,9 @@ from database import engine, SessionLocal, Base
 from models import Project
 
 app = FastAPI()
+
+templates = Jinja2Templates(directory="templates")
+
 
 # Session middleware (replace 'your-secret-key' with a secure key)
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
@@ -113,6 +116,27 @@ def get_latest_commit_for_branch(owner: str, repo: str, branch_name: str):
             return {"date": commit_date_str, "message": commit_message}
     return None
 
+@app.get("/project/{project_id}", response_class=HTMLResponse)
+async def project_detail(request: Request, project_id: int, db: Session = Depends(get_db)):
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    # Fetch latest commit info
+    commit_info = get_latest_commit(str(project.owner), str(project.repo))    
+    # Prepare context data. You can include any other attributes you need.
+    context = {
+        "request": request,
+        "project": {
+            "id": project.id,
+            "owner": project.owner,
+            "repo": project.repo,
+            "stars": getattr(project, "stars", None),         # Ensure these fields exist or handle defaults
+            "forks": getattr(project, "forks", None),
+            "open_issues": getattr(project, "open_issues", None),
+            "latest_commit": commit_info
+        }
+    }
+    return templates.TemplateResponse("project_detail.html", context)
 # Landing page
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -220,3 +244,18 @@ async def delete_project(request: Request, project_id: int, db: Session = Depend
         db.delete(project)
         db.commit()
     return RedirectResponse(url="/dashboard", status_code=302)
+
+
+def get_latest_commit(owner: str, repo: str):
+    # Fetch the most recent commit for the default branch
+    url = f"https://api.github.com/repos/{owner}/{repo}/commits"
+    params = {"per_page": 1}
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        commits = response.json()
+        if commits:
+            commit = commits[0]
+            commit_date = commit.get("commit", {}).get("author", {}).get("date")
+            commit_message = commit.get("commit", {}).get("message")
+            return {"date": commit_date, "message": commit_message}
+    return None

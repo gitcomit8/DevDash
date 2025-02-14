@@ -1,0 +1,82 @@
+{% extends "base.html" %} {% block content %}
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">
+      {{ project.owner }}/{{ project.repo }}
+    </h1>
+    <p class="text-gray-600 mt-2">
+      Detailed insights and activity for this project.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="flex flex-col items-center">
+      <!-- Star Icon Wrapper -->
+      <div class="w-5 h-5 inline-block mb-2">
+        <svg
+          class="w-full h-full text-yellow-500"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.956c.3.921-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.176 0l-3.388 2.46c-.784.57-1.838-.197-1.54-1.118l1.287-3.956a1 1 0 00-.364-1.118L2.05 9.384c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.957z"
+          />
+        </svg>
+      </div>
+      <p class="text-lg font-semibold">{{ project.stars }}</p>
+      <p class="text-gray-500 text-sm">Stars</p>
+    </div>
+    <div class="flex flex-col items-center">
+      <!-- Fork Icon Wrapper -->
+      <div class="w-5 h-5 inline-block mb-2">
+        <svg
+          class="w-full h-full text-blue-500"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M5 3a3 3 0 11-2.995 2.824L2 6a3 3 0 013-3zm0 12a3 3 0 11-2.995 2.824L2 18a3 3 0 013-3zm10-12a3 3 0 11-2.995 2.824L13 6a3 3 0 013-3zm0 12a3 3 0 11-2.995 2.824L13 18a3 3 0 013-3z"
+          />
+        </svg>
+      </div>
+      <p class="text-lg font-semibold">{{ project.forks }}</p>
+      <p class="text-gray-500 text-sm">Forks</p>
+    </div>
+    <div class="flex flex-col items-center">
+      <!-- Issue Icon Wrapper -->
+      <div class="w-5 h-5 inline-block mb-2">
+        <svg
+          class="w-full h-full text-red-500"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8zm-9-4a1 1 0 112 0v4a1 1 0 01-2 0V6zm1 8a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <p class="text-lg font-semibold">{{ project.open_issues }}</p>
+      <p class="text-gray-500 text-sm">Open Issues</p>
+    </div>
+  </div>
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Latest Commit</h2>
+    {% if project.latest_commit %}
+    <div class="p-6 bg-gray-50 rounded border border-gray-200">
+      <p class="text-gray-600">Date: {{ project.latest_commit.date }}</p>
+      <p class="text-gray-800 font-medium mt-2">
+        Message: {{ project.latest_commit.message }}
+      </p>
+    </div>
+    {% else %}
+    <p class="text-gray-500">No recent commit data available.</p>
+    {% endif %}
+  </div>
+  <div>
+    <a href="/dashboard" class="text-blue-600 hover:text-blue-800 transition"
+      >&larr; Back to Dashboard</a
+    >
+  </div>
+</div>
+{% endblock %}

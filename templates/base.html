@@ -2,26 +2,111 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ title | default("DevDash") }}</title>
     <link rel="stylesheet" href="/static/css/tailwind.css" />
+    <style>
+      /* Fade-in animation */
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
   </head>
-  <body class="bg-gray-100 font-sans antialiased">
+  <body class="bg-gray-50 text-gray-800 font-sans antialiased fade-in">
     <!-- Navbar -->
-    <nav class="bg-white shadow">
-      <div
-        class="container mx-auto px-4 py-4 flex justify-between items-center"
-      >
-        <a href="/" class="text-2xl font-bold text-gray-800">DevDash</a>
-        <div>
+    <nav class="bg-white shadow fixed w-full z-10 top-0">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center">
+            <a href="/" class="text-2xl font-bold text-blue-600">DevDash</a>
+            <div class="hidden md:block">
+              <div class="ml-10 flex items-baseline space-x-4">
+                <a
+                  href="/"
+                  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                  >Home</a
+                >
+                {% if user %}
+                <a
+                  href="/dashboard"
+                  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                  >Dashboard</a
+                >
+                <a
+                  href="/logout"
+                  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                  >Logout</a
+                >
+                {% else %}
+                <a
+                  href="/login"
+                  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                  >Login</a
+                >
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <!-- Mobile menu button -->
+          <div class="-mr-2 flex md:hidden">
+            <button
+              id="mobile-menu-button"
+              type="button"
+              class="bg-blue-600 inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+            >
+              <span class="sr-only">Open main menu</span>
+              <!-- Hamburger Icon wrapped in a fixed container -->
+              <div class="w-6 h-6 inline-block">
+                <svg
+                  class="w-full h-full"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 8h16M4 16h16"
+                  />
+                </svg>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden md:hidden">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a
+            href="/"
+            class="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
+            >Home</a
+          >
           {% if user %}
-          <span class="text-gray-600 mr-4">Welcome, {{ user.login }}!</span>
-          <a href="/dashboard" class="text-blue-500 hover:text-blue-700 mr-4"
+          <a
+            href="/dashboard"
+            class="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
             >Dashboard</a
           >
-          <a href="/logout" class="text-red-500 hover:text-red-700">Logout</a>
+          <a
+            href="/logout"
+            class="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
+            >Logout</a
+          >
           {% else %}
-          <a href="/login" class="text-blue-500 hover:text-blue-700"
-            >Login with GitHub</a
+          <a
+            href="/login"
+            class="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
+            >Login</a
           >
           {% endif %}
         </div>
@@ -29,15 +114,15 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-6">
-      {% block content %} {% endblock %}
-    </main>
+    <div class="pt-20">{% block content %}{% endblock %}</div>
 
     <!-- Footer -->
-    <footer class="bg-white shadow mt-8">
-      <div class="container mx-auto px-4 py-4 text-center text-gray-600">
+    <footer class="bg-white shadow mt-12">
+      <div class="max-w-7xl mx-auto px-4 py-4 text-center text-gray-500">
         © 2025 DevDash. All rights reserved.
       </div>
     </footer>
+
+    <script src="/static/js/main.js"></script>
   </body>
 </html>
