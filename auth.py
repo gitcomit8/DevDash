@@ -30,8 +30,11 @@ async def auth(request: Request):
         raise HTTPException(status_code=400, detail=f'OAuth error: {error}')
     user_data_response = await oauth.github.get('user', token=token) # type: ignore
     user_data = user_data_response.json()
+    # Save both user data and the access token in session
     request.session['user'] = user_data
+    request.session['github_token'] = token['access_token']
     return RedirectResponse(url='/dashboard')
+
 
 @router.get('/logout')
 async def logout(request: Request):

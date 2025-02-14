@@ -37,6 +37,46 @@ def get_db():
 repo_cache = TTLCache(maxsize=100, ttl=300)
 branches_cache = TTLCache(maxsize=100, ttl=300)
 commits_cache = TTLCache(maxsize=200, ttl=300)
+# Cache for GraphQL queries: 100 items max, TTL 300 seconds
+graphql_repo_cache = TTLCache(maxsize=100, ttl=300)
+
+@cached(graphql_repo_cache)
+def get_repo_data_graphql(owner: str, repo: str, token: str):
+    url = "https://api.github.com/graphql"
+    query = """
+    query($owner: String!, $repo: String!) {
+      repository(owner: $owner, name: $repo) {
+        name
+        stargazerCount
+        forkCount
+        issues(states: OPEN) {
+          totalCount
+        }
+        refs(refPrefix: "refs/heads/", first: 100) {
+          nodes {
+            name
+            target {
+              ... on Commit {
+                history(first: 1) {
+                  nodes {
+                    committedDate
+                    message
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    variables = {"owner": owner, "repo": repo}
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {"error": f"Query failed with status {response.status_code}"}
 
 @cached(repo_cache)
 def get_repo_data(owner: str, repo: str):
@@ -80,7 +120,8 @@ async def index(request: Request):
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request, db: Session = Depends(get_db)):
     user = request.session.get('user')
-    if not user:
+    token = request.session.get('github_token')
+    if not user or not token:
         return RedirectResponse(url="/")
     
     projects = db.query(Project).filter(Project.user_id == user['id']).all()
@@ -89,38 +130,47 @@ async def dashboard(request: Request, db: Session = Depends(get_db)):
     for project in projects:
         owner = str(project.owner)
         repo = str(project.repo)
+        graphql_response = get_repo_data_graphql(owner, repo, token)
+        repo_data = graphql_response.get('data', {}).get('repository') # type: ignore
+        if not repo_data:
+            project_details.append({
+                "id": project.id,
+                "owner": owner,
+                "repo": repo,
+                "error": "Failed to fetch repo data"
+            })
+            continue
         
-        # Get repository data from cache
-        repo_data = get_repo_data(owner, repo)
+        stars = repo_data.get("stargazerCount")
+        forks = repo_data.get("forkCount")
+        open_issues = repo_data.get("issues", {}).get("totalCount")
         
-        # Get branches from cache
-        branches = get_branches(owner, repo)
+        # Determine the latest commit across branches
+        refs = repo_data.get("refs", {}).get("nodes", [])
         latest_commit = None
-        
-        if isinstance(branches, list):  # Ensure branches were fetched correctly
-            latest_dt = None
-            for branch in branches:
-                branch_name = branch.get("name")
-                if branch_name:
-                    commit_info = get_latest_commit_for_branch(owner, repo, branch_name)
-                    if commit_info and commit_info.get("date"):
-                        try:
-                            commit_dt = datetime.strptime(commit_info["date"], "%Y-%m-%dT%H:%M:%SZ")
-                        except ValueError:
-                            commit_dt = None
-                        if commit_dt and (latest_dt is None or commit_dt > latest_dt):
-                            latest_dt = commit_dt
-                            latest_commit = commit_info
-        else:
-            latest_commit = {"error": "Failed to fetch branch data"}
+        latest_dt = None
+        for ref in refs:
+            commit_nodes = ref.get("target", {}).get("history", {}).get("nodes", [])
+            if commit_nodes:
+                commit = commit_nodes[0]
+                date_str = commit.get("committedDate")
+                message = commit.get("message")
+                if date_str:
+                    try:
+                        commit_dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
+                    except ValueError:
+                        commit_dt = None
+                    if commit_dt and (latest_dt is None or commit_dt > latest_dt):
+                        latest_dt = commit_dt
+                        latest_commit = {"date": date_str, "message": message}
         
         project_details.append({
             "id": project.id,
             "owner": owner,
             "repo": repo,
-            "stars": repo_data.get("stargazers_count"),
-            "forks": repo_data.get("forks_count"),
-            "open_issues": repo_data.get("open_issues_count"),
+            "stars": stars,
+            "forks": forks,
+            "open_issues": open_issues,
             "latest_commit": latest_commit,
         })
     
