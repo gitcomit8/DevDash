@@ -9,3 +9,4 @@ itsdangerous
 httpx
 python-multipart
 cachetools
+psycopg2-binary
