@@ -1,83 +1,37 @@
 {% extends "base.html" %} {% block content %}
-<div class="max-w-7xl mx-auto px-4">
-  <div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold">Your Projects</h1>
-    <a
-      href="/add-project"
-      class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow transition duration-300"
-    >
-      Add New Project
-    </a>
+<div class="mb-6">
+  <h1 class="text-3xl font-bold text-primary mb-4">Your Projects</h1>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {% for project in projects %}
+  <div class="bg-white p-4 rounded shadow hover:shadow-lg transition">
+    <h2 class="text-xl font-semibold text-secondary mb-2">
+      {{ project.owner }}/{{ project.repo }}
+    </h2>
+    {% if project.latest_commit %}
+    <p class="text-sm text-gray-600 mb-2 truncate">
+      Commit: {{ project.latest_commit.message }}
+    </p>
+    <p class="text-xs text-gray-500">Date: {{ project.latest_commit.date }}</p>
+    {% else %}
+    <p class="text-gray-500 text-sm">No recent commit data available.</p>
+    {% endif %}
+    <div class="mt-4 flex justify-between">
+      <a
+        href="/project/{{ project.id }}"
+        class="text-primary hover:text-primary-dark transition text-sm"
+        >View Details</a
+      >
+      <form action="/delete-project/{{ project.id }}" method="post">
+        <button
+          type="submit"
+          class="text-red-500 hover:text-red-600 transition text-sm"
+        >
+          Delete
+        </button>
+      </form>
+    </div>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {% for project in projects %}
-    <a
-      href="/project/{{ project.id }}"
-      class="block bg-white p-6 rounded-lg shadow hover:shadow-xl transition transform hover:-translate-y-1"
-    >
-      <h2 class="text-xl font-semibold mb-4">
-        {{ project.owner }}/{{ project.repo }}
-      </h2>
-      {% if project.error %}
-      <p class="text-red-500">{{ project.error }}</p>
-      {% else %}
-      <div class="flex items-center space-x-2 text-gray-600 mb-2">
-        <!-- Star Icon Wrapper -->
-        <div class="w-2 h-2 inline-block">
-          <svg
-            class="w-full h-full text-yellow-200"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.956c.3.921-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.176 0l-3.388 2.46c-.784.57-1.838-.197-1.54-1.118l1.287-3.956a1 1 0 00-.364-1.118L2.05 9.384c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.957z"
-            />
-          </svg>
-        </div>
-        <span>{{ project.stars }}</span>
-      </div>
-      <div class="flex items-center space-x-2 text-gray-600 mb-2">
-        <!-- Fork Icon Wrapper -->
-        <div class="w-2 h-2 inline-block">
-          <svg
-            class="w-full h-full text-blue-500"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              d="M5 3a3 3 0 11-2.995 2.824L2 6a3 3 0 013-3zm0 12a3 3 0 11-2.995 2.824L2 18a3 3 0 013-3zm10-12a3 3 0 11-2.995 2.824L13 6a3 3 0 013-3zm0 12a3 3 0 11-2.995 2.824L13 18a3 3 0 013-3z"
-            />
-          </svg>
-        </div>
-        <span>{{ project.forks }}</span>
-      </div>
-      <div class="flex items-center space-x-2 text-gray-600">
-        <!-- Issue Icon Wrapper -->
-        <div class="w-2 h-2 inline-block">
-          <svg
-            class="w-full h-full text-red-500"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M18 10c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8zm-9-4a1 1 0 112 0v4a1 1 0 01-2 0V6zm1 8a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </div>
-        <span>{{ project.open_issues }}</span>
-      </div>
-      {% if project.latest_commit %}
-      <div class="text-sm text-gray-500 mt-2">
-        <p class="truncate">Commit: {{ project.latest_commit.message }}</p>
-        <p class="text-xs">{{ project.latest_commit.date }}</p>
-      </div>
-      {% else %}
-      <p class="text-gray-500 mt-2">No recent commit data available.</p>
-      {% endif %} {% endif %}
-    </a>
-    {% endfor %}
-  </div>
+  {% endfor %}
 </div>
 {% endblock %}

@@ -121,22 +121,27 @@ async def project_detail(request: Request, project_id: int, db: Session = Depend
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
-    # Fetch latest commit info
-    commit_info = get_latest_commit(str(project.owner), str(project.repo))    
-    # Prepare context data. You can include any other attributes you need.
+    
+    # Fetch repository stats from GitHub
+    stats = get_repo_stats(str(project.owner), str(project.repo))
+    
+    # Fetch latest commit info using your existing helper
+    commit_info = get_latest_commit(str(project.owner), str(project.repo))
+    
     context = {
         "request": request,
         "project": {
             "id": project.id,
             "owner": project.owner,
             "repo": project.repo,
-            "stars": getattr(project, "stars", None),         # Ensure these fields exist or handle defaults
-            "forks": getattr(project, "forks", None),
-            "open_issues": getattr(project, "open_issues", None),
-            "latest_commit": commit_info
-        }
+            "stars": stats.get("stars"),
+            "forks": stats.get("forks"),
+            "open_issues": stats.get("open_issues"),
+            "latest_commit": commit_info,
+        },
     }
     return templates.TemplateResponse("project_detail.html", context)
+
 # Landing page
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -259,3 +264,16 @@ def get_latest_commit(owner: str, repo: str):
             commit_message = commit.get("commit", {}).get("message")
             return {"date": commit_date, "message": commit_message}
     return None
+
+
+def get_repo_stats(owner: str, repo: str):
+    url = f"https://api.github.com/repos/{owner}/{repo}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        return {
+            "stars": data.get("stargazers_count"),
+            "forks": data.get("forks_count"),
+            "open_issues": data.get("open_issues_count")
+        }
+    return {"stars": None, "forks": None, "open_issues": None}

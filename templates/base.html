@@ -2,11 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ title | default("DevDash") }}</title>
     <link rel="stylesheet" href="/static/css/tailwind.css" />
     <style>
-      /* Fade-in animation */
       .fade-in {
         animation: fadeIn 0.5s ease-out;
       }
@@ -20,109 +19,133 @@
       }
     </style>
   </head>
-  <body class="bg-gray-50 text-gray-800 font-sans antialiased fade-in">
-    <!-- Navbar -->
-    <nav class="bg-white shadow fixed w-full z-10 top-0">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <div class="flex items-center">
-            <a href="/" class="text-2xl font-bold text-blue-600">DevDash</a>
-            <div class="hidden md:block">
-              <div class="ml-10 flex items-baseline space-x-4">
-                <a
-                  href="/"
-                  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-                  >Home</a
-                >
-                {% if user %}
-                <a
-                  href="/dashboard"
-                  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-                  >Dashboard</a
-                >
-                <a
-                  href="/logout"
-                  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-                  >Logout</a
-                >
-                {% else %}
-                <a
-                  href="/login"
-                  class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-                  >Login</a
-                >
-                {% endif %}
-              </div>
-            </div>
-          </div>
-          <!-- Mobile menu button -->
-          <div class="-mr-2 flex md:hidden">
-            <button
-              id="mobile-menu-button"
-              type="button"
-              class="bg-blue-600 inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
-            >
-              <span class="sr-only">Open main menu</span>
-              <!-- Hamburger Icon wrapped in a fixed container -->
-              <div class="w-6 h-6 inline-block">
-                <svg
-                  class="w-full h-full"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M4 8h16M4 16h16"
-                  />
-                </svg>
-              </div>
-            </button>
-          </div>
+  <body class="bg-gray-100 text-gray-800 font-sans antialiased fade-in">
+    <div class="flex h-screen">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-md">
+        <div class="p-4 text-center">
+          <h1 class="text-xl font-bold text-primary">DevDash</h1>
         </div>
-      </div>
-      <!-- Mobile Menu -->
-      <div id="mobile-menu" class="hidden md:hidden">
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <nav class="mt-8">
           <a
             href="/"
-            class="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
-            >Home</a
+            class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
           >
+            <!-- Home icon -->
+            <div class="w-4 h-4 inline-block">
+              <svg
+                class="w-full h-full"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6"
+                />
+              </svg>
+            </div>
+            <span class="ml-3 text-sm">Home</span>
+          </a>
           {% if user %}
           <a
             href="/dashboard"
-            class="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
-            >Dashboard</a
+            class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
           >
+            <!-- Dashboard icon -->
+            <div class="w-4 h-4 inline-block">
+              <svg
+                class="w-full h-full"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 10h4v11H3zM13 3h4v18h-4zM21 14h-4v5h4z"
+                />
+              </svg>
+            </div>
+            <span class="ml-3 text-sm">Dashboard</span>
+          </a>
+          <a
+            href="/add-project"
+            class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
+          >
+            <!-- Add project icon -->
+            <div class="w-4 h-4 inline-block">
+              <svg
+                class="w-full h-full"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </div>
+            <span class="ml-3 text-sm">Add Project</span>
+          </a>
           <a
             href="/logout"
-            class="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
-            >Logout</a
+            class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
           >
+            <!-- Logout icon -->
+            <div class="w-4 h-4 inline-block">
+              <svg
+                class="w-full h-full"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7"
+                />
+              </svg>
+            </div>
+            <span class="ml-3 text-sm">Logout</span>
+          </a>
           {% else %}
           <a
             href="/login"
-            class="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
-            >Login</a
+            class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200"
           >
+            <!-- Login icon -->
+            <div class="w-4 h-4 inline-block">
+              <svg
+                class="w-full h-full"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12H3m12 0l-4-4m4 4l-4 4"
+                />
+              </svg>
+            </div>
+            <span class="ml-3 text-sm">Login</span>
+          </a>
           {% endif %}
-        </div>
+        </nav>
+      </aside>
+      <!-- Main Content Area -->
+      <div class="flex-1 overflow-y-auto p-6">
+        {% block content %}{% endblock %}
       </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="pt-20">{% block content %}{% endblock %}</div>
-
-    <!-- Footer -->
-    <footer class="bg-white shadow mt-12">
-      <div class="max-w-7xl mx-auto px-4 py-4 text-center text-gray-500">
-        © 2025 DevDash. All rights reserved.
-      </div>
-    </footer>
-
-    <script src="/static/js/main.js"></script>
+    </div>
   </body>
 </html>
