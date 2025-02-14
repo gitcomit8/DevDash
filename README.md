@@ -147,7 +147,3 @@ feat: Initial implementation of DevDash
 This project is licensed under the [MIT License](LICENSE).
 
 ---
-
-```
-
-```
