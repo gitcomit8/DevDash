@@ -40,12 +40,11 @@ DevDash is a personalized project tracking dashboard for developers. With DevDas
 ## Setup Instructions
 
 1. **Clone the Repository:**
+
    ```bash
    git clone https://github.com/your-username/DevDash.git
    cd DevDash
    ```
-
-````
 
 2. **Create and Activate a Virtual Environment:**
 
@@ -148,4 +147,7 @@ feat: Initial implementation of DevDash
 This project is licensed under the [MIT License](LICENSE).
 
 ---
-````
+
+```
+
+```
