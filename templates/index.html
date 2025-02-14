@@ -1,0 +1,7 @@
+{% extends "base.html" %} {% block content %}
+<h1>Welcome to DevDash</h1>
+{% if user %}
+<p>Visit your <a href="/dashboard">Dashboard</a> to track your projects.</p>
+{% else %}
+<p>Please <a href="/login">login with GitHub</a> to get started.</p>
+{% endif %} {% endblock %}

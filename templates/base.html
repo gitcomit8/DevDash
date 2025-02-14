@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ title | default("DevDash") }}</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 2rem;
+      }
+      nav {
+        margin-bottom: 2rem;
+      }
+      nav a {
+        margin-right: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      {% if user %}
+      <span>Welcome, {{ user.login }}!</span>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/logout">Logout</a>
+      {% else %}
+      <a href="/login">Login with GitHub</a>
+      {% endif %}
+    </nav>
+    <div>{% block content %} {% endblock %}</div>
+  </body>
+</html>
