@@ -3,6 +3,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from cachetools import TTLCache, cached
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 import requests
 from sqlalchemy.orm import Session
 from datetime import datetime
@@ -20,6 +21,8 @@ templates = Jinja2Templates(directory="templates")
 
 # Include auth routes
 app.include_router(auth_router)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 # Create database tables
 Base.metadata.create_all(bind=engine)

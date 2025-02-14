@@ -3,29 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <title>{{ title | default("DevDash") }}</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 2rem;
-      }
-      nav {
-        margin-bottom: 2rem;
-      }
-      nav a {
-        margin-right: 1rem;
-      }
-    </style>
+    <link rel="stylesheet" href="/static/css/tailwind.css" />
   </head>
-  <body>
-    <nav>
-      {% if user %}
-      <span>Welcome, {{ user.login }}!</span>
-      <a href="/dashboard">Dashboard</a>
-      <a href="/logout">Logout</a>
-      {% else %}
-      <a href="/login">Login with GitHub</a>
-      {% endif %}
+  <body class="bg-gray-100 font-sans antialiased">
+    <!-- Navbar -->
+    <nav class="bg-white shadow">
+      <div
+        class="container mx-auto px-4 py-4 flex justify-between items-center"
+      >
+        <a href="/" class="text-2xl font-bold text-gray-800">DevDash</a>
+        <div>
+          {% if user %}
+          <span class="text-gray-600 mr-4">Welcome, {{ user.login }}!</span>
+          <a href="/dashboard" class="text-blue-500 hover:text-blue-700 mr-4"
+            >Dashboard</a
+          >
+          <a href="/logout" class="text-red-500 hover:text-red-700">Logout</a>
+          {% else %}
+          <a href="/login" class="text-blue-500 hover:text-blue-700"
+            >Login with GitHub</a
+          >
+          {% endif %}
+        </div>
+      </div>
     </nav>
-    <div>{% block content %} {% endblock %}</div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6">
+      {% block content %} {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white shadow mt-8">
+      <div class="container mx-auto px-4 py-4 text-center text-gray-600">
+        © 2025 DevDash. All rights reserved.
+      </div>
+    </footer>
   </body>
 </html>

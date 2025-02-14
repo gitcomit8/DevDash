@@ -1,28 +1,44 @@
 {% extends "base.html" %} {% block content %}
-<h1>Your Projects</h1>
-<p><a href="/add-project">Add a New Project</a></p>
-<ul>
+<div class="mb-6 flex justify-between items-center">
+  <h1 class="text-3xl font-bold text-gray-800">Your Projects</h1>
+  <a
+    href="/add-project"
+    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+    >Add New Project</a
+  >
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   {% for project in projects %}
-  <li>
-    <strong>{{ project.owner }}/{{ project.repo }}</strong><br />
-    {% if project.stars is not none %} ⭐ Stars: {{ project.stars }}, Forks: {{
-    project.forks }}, Open Issues: {{ project.open_issues }}<br />
-    {% else %} {{ project.error }} {% endif %} {% if project.latest_commit %} {%
-    if project.latest_commit.error %} Latest Commit: {{
-    project.latest_commit.error }} {% else %}
-    <em>Last Commit:</em> {{ project.latest_commit.date }}<br />
-    <em>Message:</em> {{ project.latest_commit.message }} {% endif %} {% else %}
-    Latest commit info not available. {% endif %}
-    <!-- Delete button for removing the project -->
-    <form
-      action="/delete-project/{{ project.id }}"
-      method="post"
-      style="display: inline"
-    >
-      <button type="submit">Delete</button>
+  <div class="bg-white shadow rounded p-4">
+    <h2 class="text-xl font-semibold mb-2">
+      {{ project.owner }}/{{ project.repo }}
+    </h2>
+    {% if project.error %}
+    <p class="text-red-500">{{ project.error }}</p>
+    {% else %}
+    <ul class="mb-2 text-gray-600">
+      <li>⭐ Stars: {{ project.stars }}</li>
+      <li>🍴 Forks: {{ project.forks }}</li>
+      <li>🐛 Open Issues: {{ project.open_issues }}</li>
+    </ul>
+    {% if project.latest_commit %}
+    <div class="text-sm text-gray-500">
+      <p>Last Commit: {{ project.latest_commit.date }}</p>
+      <p>Message: {{ project.latest_commit.message }}</p>
+    </div>
+    {% else %}
+    <p class="text-gray-500">Latest commit info not available.</p>
+    {% endif %} {% endif %}
+    <form action="/delete-project/{{ project.id }}" method="post" class="mt-4">
+      <button
+        type="submit"
+        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+      >
+        Delete
+      </button>
     </form>
-  </li>
-  <hr />
+  </div>
   {% endfor %}
-</ul>
+</div>
 {% endblock %}

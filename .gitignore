@@ -95,3 +95,15 @@ celerybeat-schedule
 # OS files
 .DS_Store
 Thumbs.db
+
+# Node.js dependencies
+node_modules/
+
+# Tailwind CSS build output
+# If you prefer not to commit the generated CSS, uncomment the following line:
+static/css/tailwind.css
+
+# NPM/Yarn logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

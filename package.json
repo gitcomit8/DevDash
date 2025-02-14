@@ -1,0 +1,28 @@
+{
+  "name": "devdash",
+  "version": "1.0.0",
+  "description": "DevDash is a personalized project tracking dashboard for developers. With DevDash, you can log in with your GitHub account, add repositories you’re actively working on (using the \"owner/repo\" format), and view enriched insights about each project—such as stars, forks, open issues, and detailed latest commit information across all branches. In-memory caching with `cachetools` is used to speed up repeated API calls.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gitcomit8/DevDash.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gitcomit8/DevDash/issues"
+  },
+  "homepage": "https://github.com/gitcomit8/DevDash#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.2",
+    "tailwindcss": "^4.0.6"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.6"
+  }
+}
